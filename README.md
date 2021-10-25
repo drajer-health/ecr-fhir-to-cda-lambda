@@ -20,13 +20,20 @@ Clone the repository using the below command in command prompt
 
 Import Project as Maven Project Build:
 
+### Setting Saxon PE license:
+1. Go to the `/src/main/resources` folder.
+
+2. Replace the licence `saxon-license.lic` file actual license file.
+
 Navigate to `ecr-fhir-to-cda-lambda` directory  `..../` and run Maven build to build lambda jar file.
 
 ```
+$ mvn clean
+
 $ mvn clean install
 ```
 
-This will generate a war file under target/converter-1.0.0.jar.
+This will generate a war file under target/ecr-fhir-to-cda-lambda-1.0.0.jar.
 
 ## AWS Lambda
 
@@ -90,7 +97,7 @@ Permissions: Create a new role with basic Lambda permissions or select your orga
 
 8. Select .zip or .jar file option.
 
-9. Click upload and navigate to your local workspace target folder and select converter-1.0.0.jar and click "Save".
+9. Click upload and navigate to your local workspace target folder and select ecr-fhir-to-cda-lambda-1.0.0.jar and click "Save".
 
 10. Click on "Edit" on "Runtime Settings".
 
