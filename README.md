@@ -110,13 +110,11 @@ To process the file from the S3 bucket, lambda function needs to be configured t
 
 1.  Click on "Configuration" tab and then "Environment Variables"
 
-2.  Under the General Configuration, click on "Edit" and set the timeout to 1 min  
+2.  Click on "Edit" to add new environment variable
     
-3.  Click on "Edit" to add new environment variable
+3.  Click on "Add new environment variable"
     
-4.  Click on "Add new environment variable"
-    
-5.  Enter
+4.  Enter
     
 
 |Environment Variable| Value |
