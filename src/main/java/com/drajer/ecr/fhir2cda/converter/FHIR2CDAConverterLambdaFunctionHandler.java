@@ -71,7 +71,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3
 
 			context.getLogger().log("Output File----" + outputFile.getAbsolutePath());
 			context.getLogger().log("Output File -- CanWrite?:" + outputFile.canWrite());
-			context.getLogger().log("Output File -- Length:" + outputFile.length());
+			context.getLogger().log("Output File -- Length Before:" + outputFile.length());
 
 			try (FileOutputStream outputStream = new FileOutputStream(outputFile, false)) {
 				int read;
@@ -82,7 +82,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3
 				outputStream.close();
 			}
 
-			context.getLogger().log("Output File -- Length:" + outputFile.length());
+			context.getLogger().log("Output File -- Length After:" + outputFile.length());
 			context.getLogger().log("---- s3Object-Content....:" + s3Object.getObjectMetadata().getContentType());
 
 			UUID randomUUID = UUID.randomUUID();
@@ -166,16 +166,17 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3
 
 		try {
 
-			String[] commandLineArguments = new String[4];
+			String[] commandLineArguments = new String[3];
 
 			commandLineArguments[0] = "-xsl:" + xslFilePath;
 			commandLineArguments[1] = "-s:" + sourceXml;
-			commandLineArguments[2] = "-license:on";
-			commandLineArguments[3] = "-o:" + "/tmp/" + outputFileName + ".xml";
+			//commandLineArguments[2] = "-license:on";
+			commandLineArguments[2] = "-o:" + "/tmp/" + outputFileName + ".xml";
 
 			Transform.main(commandLineArguments);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			context.getLogger().log("ERROR: Transformation Failed with exception " + e.getMessage());
 		}
 	}
