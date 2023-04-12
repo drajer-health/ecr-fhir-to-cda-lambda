@@ -24,7 +24,7 @@ limitations under the License.
 
     <!-- fhir:subject[parent::fhir:Composition or parent::fhir:Communication or parent::fhir:QuestionnaireResponse] -> get referenced resource entry url and process -->
     <!-- **TODO** Do we really need the parents - wouldn't we want to process all subjects here? -->
-    <xsl:template match="fhir:subject[parent::fhir:Composition or parent::fhir:Communication or parent::fhir:QuestionnaireResponse]">
+    <xsl:template match="fhir:subject[parent::fhir:Composition or parent::fhir:Communication or parent::fhir:Bundle or parent::fhir:QuestionnaireResponse]">
         <xsl:for-each select="fhir:reference">
             <xsl:variable name="referenceURI">
                 <xsl:call-template name="resolve-to-full-url">
