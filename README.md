@@ -59,7 +59,7 @@ Permissions: Create a new role with basic Lambda permissions or select your orga
 
 2. Under `Permissions` tab click on `Create inline Policy`
 
-3. Click on `{ } JSON` tab and ad the following security policy. Replace the `S3-BUCKET-NAME` with your S3 bucket name.
+3. Click on `{ } JSON` tab and ad the following security policy. Replace the `SQS-NAME` with your SQS name.
 	```
 	{
     "Version": "2012-10-17",
