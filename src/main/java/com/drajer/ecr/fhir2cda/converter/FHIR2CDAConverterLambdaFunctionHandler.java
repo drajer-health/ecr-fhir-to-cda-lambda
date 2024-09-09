@@ -114,7 +114,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3
 			processor.setConfigurationProperty(FeatureKeys.ALLOW_MULTITHREADING, true);
 			XsltCompiler compiler = processor.newXsltCompiler();
 
-			compiler.setJustInTimeCompilation(true);
+//			compiler.setJustInTimeCompilation(true);
 			XsltExecutable executable = compiler.compile(new StreamSource(xsltFile));
 			return executable.load();
 		} catch (SaxonApiException | IOException e) {
