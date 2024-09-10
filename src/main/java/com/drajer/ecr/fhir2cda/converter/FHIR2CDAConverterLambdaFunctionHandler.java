@@ -156,6 +156,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 		String key = null;
 		String bucket = null;
 		try {
+			instance = FHIR2CDAConverterLambdaFunctionHandler.getInstance();
 			SQSMessage message = event.getRecords().get(0);
 			String messageBody = message.getBody();
 			context.getLogger().log("messageBody : " + messageBody);
@@ -216,7 +217,6 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 
 //			xsltTransformation(xsltFile.getAbsolutePath(), outputFile.getAbsolutePath(), randomUUID, context);
 			
-			instance = getInstance();
 			instance.transform(outputFile, randomUUID, context);
 
 			String responseXML = getFileContentAsString(randomUUID, context);
