@@ -20,9 +20,11 @@ import org.springframework.util.ResourceUtils;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.event.S3EventNotification.S3EventNotificationRecord;
+import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -40,7 +42,7 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
-public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3Event, String> {
+public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQSEvent, String> {
 	private AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 	private String destPath = System.getProperty("java.io.tmpdir");
 	public static final int DEFAULT_BUFFER_SIZE = 8192;
@@ -66,11 +68,12 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3
 			throw new IllegalArgumentException("S3 bucket name is not set in the environment variables.");
 		}		
 		// Load the Saxon processor and transformer
-		this.processor = createSaxonProcessor(bucketName);
+		this.processor = createSaxonProcessor();
 		this.transformer = initializeTransformer();
 	}	
 	
-	private Processor createSaxonProcessor(String bucketName) throws IOException {
+	private Processor createSaxonProcessor() throws IOException {
+		String bucketName = System.getenv("LICENSE_BUCKET_NAME");
 		String licenseFilePath = "/tmp/saxon-license.lic"; // Ensure temp path is used
 		ProfessionalConfiguration configuration = new ProfessionalConfiguration();
 		String key = "license/saxon-license.lic";
@@ -146,16 +149,20 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<S3
 	}		
 
 	@Override
-	public String handleRequest(S3Event event, Context context) {
+	public String handleRequest(SQSEvent event, Context context) {
 		InputStream input = null;
 		File outputFile = null;
 		String keyFileName = "";
 		String keyPrefix = "";
 		try {
 
-			S3EventNotificationRecord record = event.getRecords().get(0);
-			String key = record.getS3().getObject().getKey();
+			SQSMessage message = event.getRecords().get(0);
+			String messageBody = message.getBody();
+			S3EventNotification s3EventNotification = S3EventNotification.parseJson(messageBody);
+			S3EventNotification.S3EventNotificationRecord record = s3EventNotification.getRecords().get(0);
+
 			String bucket = record.getS3().getBucket().getName();
+			String key = record.getS3().getObject().getKey();			
 
 			context.getLogger().log("EventName:" + record.getEventName());
 			context.getLogger().log("BucketName:" + bucket);
