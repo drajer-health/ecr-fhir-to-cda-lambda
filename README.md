@@ -212,7 +212,9 @@ Lambda function needs to be triggered, for this we need to add and configure the
 
 7. Specify SQS queue 
     Enter SQS queque ARN
-    arn:aws:<<sqs arn >>
+
+    `arn:aws:<<SQS ARN >>`
+    
 
 8. Click `Save Changes` 
 
