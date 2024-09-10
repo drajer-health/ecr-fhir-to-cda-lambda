@@ -93,7 +93,7 @@ Permissions: Create a new role with basic Lambda permissions or select your orga
         }
     ]
 }
-   
+```   
 4. Click on button `Next` 
 
 5. Enter policy name `ecrFhirToCdaLamdaPolcy`
@@ -151,7 +151,7 @@ Choose the SQS queue and click `Create Queue`
 5. Access Policy `Advanced`
    
 6. Make neccessary changes to below and copy as in-line policy
-   ```
+```
    {
   "Version": "2012-10-17",
   "Id": "__default_policy_ID",
