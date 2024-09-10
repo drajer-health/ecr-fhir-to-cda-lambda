@@ -62,7 +62,8 @@ Permissions: Create a new role with basic Lambda permissions or select your orga
 3. Click on `{ } JSON` tab and ad the following security policy. 
    Replace the `S3-BUCKET-NAME` with your S3 bucket name.
    Replace the `S3-LIC_BUCKET-NAME` with your S3 bucket name for saxon license.
-	```
+
+```
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -92,7 +93,7 @@ Permissions: Create a new role with basic Lambda permissions or select your orga
         }
     ]
 }
-   ```
+   
 4. Click on button `Next` 
 
 5. Enter policy name `ecrFhirToCdaLamdaPolcy`
