@@ -92,7 +92,7 @@ Permissions: Create a new role with basic Lambda permissions or select your orga
         }
     ]
 }
-	``
+   ```
 4. Click on button `Next` 
 
 5. Enter policy name `ecrFhirToCdaLamdaPolcy`
