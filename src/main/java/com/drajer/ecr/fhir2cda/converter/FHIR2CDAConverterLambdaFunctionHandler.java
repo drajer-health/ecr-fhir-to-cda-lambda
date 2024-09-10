@@ -19,7 +19,6 @@ import org.springframework.util.ResourceUtils;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.amazonaws.services.s3.AmazonS3;
@@ -154,18 +153,21 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 		File outputFile = null;
 		String keyFileName = "";
 		String keyPrefix = "";
+		String key = null;
+		String bucket = null;
 		try {
-
 			SQSMessage message = event.getRecords().get(0);
 			String messageBody = message.getBody();
+			context.getLogger().log("messageBody : " + messageBody);
 			S3EventNotification s3EventNotification = S3EventNotification.parseJson(messageBody);
+			context.getLogger().log("s3EventNotification getRecords size : " + s3EventNotification.getRecords().size());
 			S3EventNotification.S3EventNotificationRecord record = s3EventNotification.getRecords().get(0);
 
-			String bucket = record.getS3().getBucket().getName();
-			String key = record.getS3().getObject().getKey();			
+			bucket = record.getS3().getBucket().getName();
+			key = record.getS3().getObject().getKey();
 
-			context.getLogger().log("EventName:" + record.getEventName());
-			context.getLogger().log("BucketName:" + bucket);
+			context.getLogger().log("EventName : " + record.getEventName());
+			context.getLogger().log("BucketName : " + bucket);
 			context.getLogger().log("Key:" + key);
 
 			if (key != null && key.indexOf(File.separator) != -1) {
@@ -214,6 +216,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 
 //			xsltTransformation(xsltFile.getAbsolutePath(), outputFile.getAbsolutePath(), randomUUID, context);
 			
+			instance = getInstance();
 			instance.transform(outputFile, randomUUID, context);
 
 			String responseXML = getFileContentAsString(randomUUID, context);
