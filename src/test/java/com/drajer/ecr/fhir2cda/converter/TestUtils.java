@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.UpperCamelCaseStrategy;
 
 /**
  * Helper utilities for testing Lambda functions.
@@ -45,7 +46,7 @@ public class TestUtils {
         mapper.registerModule(new TestJacksonMapperModule());
 
         snsEventMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        snsEventMapper.setPropertyNamingStrategy(PropertyNamingStrategy.PASCAL_CASE_TO_CAMEL_CASE);
+        snsEventMapper.setPropertyNamingStrategy(new UpperCamelCaseStrategy());
         snsEventMapper.registerModule(new TestJacksonMapperModule());
 
         dynamodbEventMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
