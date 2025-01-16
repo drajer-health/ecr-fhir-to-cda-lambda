@@ -225,7 +225,7 @@ Lambda function needs to be triggered, for this we need to add and configure the
 
 3. Enter Name `eg: fhir-cda-event`
 
-4. Enter Suffix as `EICR_FHIR.xml`
+4. Enter Prefix as `RawFHIR-T-PH-ECR-XML/`
 
 5. Event Types as `All object create events`
 
