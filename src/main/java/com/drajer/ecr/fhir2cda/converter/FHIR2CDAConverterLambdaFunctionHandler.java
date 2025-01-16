@@ -173,11 +173,13 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 
 			if (key != null && key.indexOf(File.separator) != -1) {
 				keyFileName = key.substring(key.lastIndexOf(File.separator));
-				keyPrefix = key.substring(0, key.lastIndexOf(File.separator) + 1);
+				keyPrefix = key.replace("RawFHIR-T-PH-ECR-XML","FHIRCDAInboundV2");
+				
 			} else {
 				keyFileName = key;
 			}
 
+			context.getLogger().log("keyPrefix:" + keyPrefix);
 			context.getLogger().log("JVM - Temp Folder Path:::" + destPath);
 
 			if (!this.isConverterBucket(bucket)) {
@@ -315,7 +317,8 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 			meta.setContentType("text/xml");
 
 			// Uploading to S3 destination bucket
-			s3Client.putObject(theBucketName, theKeyPrefix + "EICR_CDA.xml", is, meta);
+			context.getLogger().log("Uploading to s3 destination :" + theKeyPrefix);
+			s3Client.putObject(theBucketName, theKeyPrefix , is, meta);
 			is.close();
 		} catch (Exception e) {
 			context.getLogger().log("ERROR:" + e.getMessage());
