@@ -183,7 +183,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 			String targerFolder = "FHIRCDAInboundV2";
 			envVar = System.getenv("TARGET_FOLDER");
 			if (envVar == null || envVar.isEmpty()) {
-				throw new IllegalArgumentException("Target Folder is not set in the environment variables.");
+				context.getLogger().log("Target Folder is not set in the environment variables.");
 			}else {
 				targerFolder = envVar;
 			}
