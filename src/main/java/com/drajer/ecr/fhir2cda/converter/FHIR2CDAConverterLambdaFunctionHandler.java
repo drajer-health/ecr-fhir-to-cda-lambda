@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.transform.Source;
@@ -19,17 +21,16 @@ import org.springframework.util.ResourceUtils;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.SQSEvent;
-import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.StringUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saxonica.config.ProfessionalConfiguration;
 
 import net.sf.saxon.Transform;
@@ -41,7 +42,7 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
-public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQSEvent, String> {
+public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<Map<String, Object>, String> {
 	private AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
 	private String destPath = System.getProperty("java.io.tmpdir");
 	public static final int DEFAULT_BUFFER_SIZE = 8192;
@@ -148,7 +149,7 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 	}		
 
 	@Override
-	public String handleRequest(SQSEvent event, Context context) {
+	public String handleRequest(Map<String, Object> event, Context context) {
 		InputStream input = null;
 		File outputFile = null;
 		String keyFileName = "";
@@ -157,17 +158,22 @@ public class FHIR2CDAConverterLambdaFunctionHandler implements RequestHandler<SQ
 		String bucket = null;
 		try {
 			instance = FHIR2CDAConverterLambdaFunctionHandler.getInstance();
-			SQSMessage message = event.getRecords().get(0);
-			String messageBody = message.getBody();
-			context.getLogger().log("messageBody : " + messageBody);
-			S3EventNotification s3EventNotification = S3EventNotification.parseJson(messageBody);
-			context.getLogger().log("s3EventNotification getRecords size : " + s3EventNotification.getRecords().size());
-			S3EventNotification.S3EventNotificationRecord record = s3EventNotification.getRecords().get(0);
+			ArrayList records = (ArrayList) event.get("Records");
+			Map<String, Object> inputMap = (Map<String, Object>) records.get(0);
+			String jsonBody = (String) inputMap.get("body");
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode rootNode = objectMapper.readTree(jsonBody);
+			JsonNode detailNode = rootNode.get("detail");
+			if (detailNode == null) {
+				detailNode = rootNode;
+			}			
+			JsonNode bucketNode = detailNode.get("bucket");
+			JsonNode keyObjectNode = detailNode.get("object");
 
-			bucket = record.getS3().getBucket().getName();
-			key = record.getS3().getObject().getKey();
+			bucket = bucketNode.get("name").asText();
+			key = keyObjectNode.get("key").asText(); // record.getS3().getObject().getKey();
 
-			context.getLogger().log("EventName : " + record.getEventName());
+			//context.getLogger().log("EventName : " + record.getEventName());
 			context.getLogger().log("BucketName : " + bucket);
 			context.getLogger().log("Key:" + key);
 
