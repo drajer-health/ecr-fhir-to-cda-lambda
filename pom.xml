@@ -5,12 +5,14 @@
 
 	<groupId>com.drajer.ecr.fhir2cda</groupId>
 	<artifactId>ecr-fhir-to-cda-lambda</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 	<packaging>jar</packaging>
 	<properties>
 	    <maven.compiler.target>17</maven.compiler.target>
 	    <maven.compiler.source>17</maven.compiler.source>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <spring.core.version>7.0.10</spring.core.version>   
+	    <jackson.version>2.22.4</jackson.version>
 	</properties>	
 	<build>
 		<plugins>
@@ -208,7 +210,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>6.2.11</version>
+			<version>${spring.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
@@ -224,6 +226,17 @@
 		    <groupId>javax.xml.bind</groupId>
 		    <artifactId>jaxb-api</artifactId>
 		    <version>2.3.1</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>		
 	</dependencies>
 </project>
